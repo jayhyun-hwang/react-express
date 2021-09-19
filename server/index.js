@@ -1,11 +1,22 @@
-const express = require('express')
+//import express
+const express = require('express');
+//assign express to app
 const app = express();
+//import mysql
 const mysql = require('mysql');
+//import cors
 const cors = require('cors');
+//import path == provides utilities for working with file and directory paths
+const path = require('path');
 
+//add cors modules to app
 app.use(cors());
+//add json modules to app
 app.use(express.json());
+//add using static file modules to app
+app.use(express.static("build"));
 
+//make database connection, assign db
 const db = mysql.createConnection({
     user: 'root',
     host: 'localhost',
@@ -13,6 +24,18 @@ const db = mysql.createConnection({
     database: 'employeeSystem'
 });
 
+//set listening port
+app.listen(3001, () => {
+    console.log("Hello Server, port is 3001");
+});
+
+//set index file as static built react file 
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
+
+//make router, req handlers
 app.post('/employees', (req, res) => {
     console.log(req.body);
     const name = req.body.name;
@@ -67,8 +90,4 @@ app.delete("/employees/:id", (req, res) => {
             res.send(result);
         }
     })
-})
-
-app.listen(3001, () => {
-    console.log("Hello Server, port is 3001");
-})
+});
